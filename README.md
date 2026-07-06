@@ -36,7 +36,7 @@ alias get_idf='. $HOME/esp/esp-idf/export.sh'
 
 # Pin Layout
 
-<img src="imgs/pingout.jpg" width="400">
+<img src="imgs/pinout.jpg" width="400">
 
 # Files
 
