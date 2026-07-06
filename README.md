@@ -36,11 +36,13 @@ alias get_idf='. $HOME/esp/esp-idf/export.sh'
 
 # Pin Layout
 
-<div display="flex" justify-content="center" align-items="center">
-    <img src="imgs/pinout.jpg" width="400">
-</div>
+<p align="center">
+    <img src="imgs/pinout.jpg" width="400" alt="ESP32 Pinout">
+</p>
 
-Credit: [ The Engineering Projects ]("https://images.theengineeringprojects.com/image/main/2024/03/esp32-pinout.jpg")
+<p align="center">
+    Credit: <a href="https://images.theengineeringprojects.com/image/main/2024/03/esp32-pinout.jpg">The Engineering Projects</a>
+</p>
 
 # Files
 
