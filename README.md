@@ -5,7 +5,7 @@ Have you ever been biking around the city and wanted privacy. Maybe preventing l
 In order to work with Jammer you need an *ESP32* device working with the *ESP-IDF* library.
 
 ## Resources
-+ Microcontroller: ESP32DEVKITV1
++ ESP32DEVKITV1 Microcontroller
 + Breadboard/protoboard
 + IR Sensor
 + IFR Laser
@@ -46,11 +46,11 @@ alias get_idf='. $HOME/esp/esp-idf/export.sh'
 
 # Files
 
-Jammer/
-├── CMakeLists.txt
-└── src/
-    ├── CMakeLists.txt
-    └── jammer.c
-└── cad/
-    ├── platform.3df
-    └── left.3df
+Jammer/ \
+├── CMakeLists.txt \
+└── src/ \
+    ├── CMakeLists.txt \
+    └── jammer.c \
+└── cad/ \
+    ├── platform.3df \
+    └── left.3df \
