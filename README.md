@@ -45,12 +45,13 @@ alias get_idf='. $HOME/esp/esp-idf/export.sh'
 </p>
 
 # Files
-
-Jammer \
-├── CMakeLists.txt \
-└── src/ \
-<p style="text-indent: 4em"> ├── CMakeLists.txt </p>
-<p style="text-indent: 4em"> └── jammer.c </p>
-└── cad/ \
-<p style="text-indent: 4em"> ├── platform.3df </p>
-<p style="text-indent: 4em"> └── left.3df </p>
+```
+Jammer
+├── CMakeLists.txt
+├── src/
+│   ├── CMakeLists.txt
+│   └── jammer.c
+└── cad/
+    ├── platform.3df
+    └── left.3df
+```
