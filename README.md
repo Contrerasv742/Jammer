@@ -1,6 +1,13 @@
 # Jammer
 Have you ever been biking around the city and wanted privacy. Maybe preventing lights from monitoring you for nefarious reasons. Jammer is intended to blind camera allowing you to gain some privacy back!
 
+<table align="center">
+  <tr>
+    <td><img src="angle_1.png" width="400" alt="ESP32 Pinout angle 1"></td>
+    <td><img src="angle_2.png" width="400" alt="ESP32 Pinout angle 2"></td>
+  </tr>
+</table>
+
 # Requirements
 In order to work with Jammer you need an *ESP32* device working with the *ESP-IDF* library.
 
