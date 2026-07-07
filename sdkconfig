@@ -714,6 +714,23 @@ CONFIG_PARTITION_TABLE_MD5=y
 # end of Partition Table
 
 #
+# i2c Configuration
+#
+# default:
+CONFIG_ENV_GPIO_RANGE_MIN=0
+# default:
+CONFIG_ENV_GPIO_RANGE_MAX=39
+# default:
+CONFIG_ENV_GPIO_IN_RANGE_MAX=39
+# default:
+CONFIG_ENV_GPIO_OUT_RANGE_MAX=33
+CONFIG_I2C_MASTER_SCL=22
+CONFIG_I2C_MASTER_SDA=21
+# default:
+CONFIG_I2C_MASTER_FREQUENCY=100000
+# end of i2c Configuration
+
+#
 # Compiler options
 #
 # default:

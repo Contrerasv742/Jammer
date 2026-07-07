@@ -1,6 +1,6 @@
 /*!
- * @file DFRobot_RGBLCD1602.cpp
- * @brief DFRobot_RGBLCD1602 class infrastructure, the implementation of basic methods
+ * @file Display.cpp
+ * @brief Display class infrastructure, the implementation of basic methods
  * @copyright	Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
  * @maintainer [yangfeng](feng.yang@dfrobot.com)
@@ -19,7 +19,7 @@
 #include "esp_rom_sys.h"
 
 
-#include "DFRobot_RGBLCD1602.h"
+#include "Display.h"
 
 const uint8_t color_define[4][3] = 
 {
@@ -30,7 +30,7 @@ const uint8_t color_define[4][3] =
 };
 
 /*******************************public*******************************/
-DFRobot_RGBLCD1602::DFRobot_RGBLCD1602(
+Display::Display(
     uint8_t RGBAddr, uint8_t lcdCols, 
     uint8_t lcdRows, TwoWire *pWire,
     uint8_t lcdAddr
@@ -42,7 +42,7 @@ DFRobot_RGBLCD1602::DFRobot_RGBLCD1602(
   _pWire = pWire;
 }
 
-void DFRobot_RGBLCD1602::init() {
+void Display::init() {
   _pWire->begin();
   if(_RGBAddr == (0x60)){
     REG_RED   =      0x04;
@@ -69,73 +69,73 @@ void DFRobot_RGBLCD1602::init() {
   begin(_rows);
 }
 
-void DFRobot_RGBLCD1602::clear() {
+void Display::clear() {
     command(LCD_CLEARDISPLAY);        // clear display, set cursor position to zero
     vTaskDelay(pdMS_TO_TICKS(2000));        // this command takes a long time!
 }
 
-void DFRobot_RGBLCD1602::home() {
+void Display::home() {
     command(LCD_RETURNHOME);        // set cursor position to zero
     vTaskDelay(pdMS_TO_TICKS(2000));        // this command takes a long time!
 }
 
-void DFRobot_RGBLCD1602::noDisplay() {
+void Display::noDisplay() {
     _showControl &= ~LCD_DISPLAYON;
     command(LCD_DISPLAYCONTROL | _showControl);
 }
 
-void DFRobot_RGBLCD1602::display() {
+void Display::display() {
     _showControl |= LCD_DISPLAYON;
     command(LCD_DISPLAYCONTROL | _showControl);
 }
 
-void DFRobot_RGBLCD1602::stopBlink() {
+void Display::stopBlink() {
     _showControl &= ~LCD_BLINKON;
     command(LCD_DISPLAYCONTROL | _showControl);
 }
-void DFRobot_RGBLCD1602::blink() {
+void Display::blink() {
     _showControl |= LCD_BLINKON;
     command(LCD_DISPLAYCONTROL | _showControl);
 }
 
-void DFRobot_RGBLCD1602::noCursor() {
+void Display::noCursor() {
     _showControl &= ~LCD_CURSORON;
     command(LCD_DISPLAYCONTROL | _showControl);
 }
 
-void DFRobot_RGBLCD1602::cursor() { _showControl |= LCD_CURSORON;
+void Display::cursor() { _showControl |= LCD_CURSORON;
     command(LCD_DISPLAYCONTROL | _showControl);
 }
 
-void DFRobot_RGBLCD1602::scrollDisplayLeft(void) {
+void Display::scrollDisplayLeft(void) {
     command(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVELEFT);
 }
 
-void DFRobot_RGBLCD1602::scrollDisplayRight(void) {
+void Display::scrollDisplayRight(void) {
     command(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVERIGHT);
 }
 
-void DFRobot_RGBLCD1602::leftToRight(void) {
+void Display::leftToRight(void) {
     _showMode |= LCD_ENTRYLEFT;
     command(LCD_ENTRYMODESET | _showMode);
 }
 
-void DFRobot_RGBLCD1602::rightToLeft(void) {
+void Display::rightToLeft(void) {
     _showMode &= ~LCD_ENTRYLEFT;
     command(LCD_ENTRYMODESET | _showMode);
 }
 
-void DFRobot_RGBLCD1602::noAutoscroll(void) {
+void Display::noAutoscroll(void) {
     _showMode &= ~LCD_ENTRYSHIFTINCREMENT;
     command(LCD_ENTRYMODESET | _showMode);
 }
 
-void DFRobot_RGBLCD1602::autoscroll(void) {
+void Display::autoscroll(void) {
     _showMode |= LCD_ENTRYSHIFTINCREMENT;
     command(LCD_ENTRYMODESET | _showMode);
 }
 
-void DFRobot_RGBLCD1602::customSymbol(uint8_t location, uint8_t charmap[]) {
+void Display::customSymbol(uint8_t location, uint8_t charmap[]) {
     location &= 0x7; // we only have 8 locations 0-7
     command(LCD_SETCGRAMADDR | (location << 3));
     
@@ -149,14 +149,14 @@ void DFRobot_RGBLCD1602::customSymbol(uint8_t location, uint8_t charmap[]) {
     send(data, 9);
 }
 
-void DFRobot_RGBLCD1602::setCursor(uint8_t col, uint8_t row) {
+void Display::setCursor(uint8_t col, uint8_t row) {
     col = (row == 0 ? col|0x80 : col|0xc0);
     uint8_t data[3] = {0x80, col};
 
     send(data, 2);
 }
 
-void DFRobot_RGBLCD1602::setRGB (uint8_t r, uint8_t g, uint8_t b) {
+void Display::setRGB (uint8_t r, uint8_t g, uint8_t b) {
   uint16_t temp_r,temp_g,temp_b;
   if(_RGBAddr == 0x60>>1){
     temp_r = (uint16_t)r*192/255;
@@ -176,19 +176,19 @@ void DFRobot_RGBLCD1602::setRGB (uint8_t r, uint8_t g, uint8_t b) {
 
 }
 
-void DFRobot_RGBLCD1602::setColor (uint8_t color) {
+void Display::setColor (uint8_t color) {
     if (color > 3) return ;
     setRGB(color_define[color][0], color_define[color][1], color_define[color][2]);
 }
 
 
-inline size_t DFRobot_RGBLCD1602::write (uint8_t value) {
+inline size_t Display::write (uint8_t value) {
     uint8_t data[3] = {0x40, value};
     send(data, 2);
     return 1; // assume success
 }
 
-size_t DFRobot_RGBLCD1602::write(const char* str) {
+size_t Display::write(const char* str) {
     if (str == nullptr) return 0;
     
     size_t n = 0;
@@ -199,7 +199,7 @@ size_t DFRobot_RGBLCD1602::write(const char* str) {
     return n;
 }
 
-size_t DFRobot_RGBLCD1602::write(const uint8_t* buffer, size_t size) {
+size_t Display::write(const uint8_t* buffer, size_t size) {
     size_t n = 0;
     while (size--) {
         write(*buffer++);
@@ -208,14 +208,14 @@ size_t DFRobot_RGBLCD1602::write(const uint8_t* buffer, size_t size) {
     return n;
 }
 
-inline void DFRobot_RGBLCD1602::command (uint8_t value) {
+inline void Display::command (uint8_t value) {
     uint8_t data[3] = {0x80, value};
     send(data, 2);
 }
 
 
 
-void DFRobot_RGBLCD1602::setBacklight (bool mode) {
+void Display::setBacklight (bool mode) {
 	if(mode){
 		setColorWhite();		// turn backlight on
 	}else{
@@ -224,7 +224,7 @@ void DFRobot_RGBLCD1602::setBacklight (bool mode) {
 }
 
 /*******************************private*******************************/
-void DFRobot_RGBLCD1602::begin( uint8_t rows, uint8_t charSize) {
+void Display::begin( uint8_t rows, uint8_t charSize) {
     if (rows > 1) {
         _showFunction |= LCD_2LINE;
     }
@@ -288,7 +288,7 @@ void DFRobot_RGBLCD1602::begin( uint8_t rows, uint8_t charSize) {
     setColorWhite();
 }
 
-void DFRobot_RGBLCD1602::send(uint8_t *data, uint8_t len)
+void Display::send(uint8_t *data, uint8_t len)
 {
     _pWire->beginTransmission(_lcdAddr);        // transmit to device #4
     for(int i=0; i<len; i++) {
@@ -298,7 +298,7 @@ void DFRobot_RGBLCD1602::send(uint8_t *data, uint8_t len)
     _pWire->endTransmission();                     // stop transmitting
 }
 
-void DFRobot_RGBLCD1602::setReg(uint8_t addr, uint8_t data)
+void Display::setReg(uint8_t addr, uint8_t data)
 {
     _pWire->beginTransmission(_RGBAddr); // transmit to device #4
     _pWire->write(addr);

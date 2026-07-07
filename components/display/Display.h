@@ -1,6 +1,6 @@
 /*!
- * @file DFRobot_RGBLCD1602.h
- * @brief DFRobot_RGBLCD1602 class infrastructure
+ * @file Display.h
+ * @brief Display class infrastructure
  * @copyright	Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
  * @maintainer [yangfeng](feng.yang@dfrobot.com)
@@ -9,8 +9,8 @@
  * @url https://github.com/DFRobot/DFRobot_RGBLCD1602
  */
 
-#ifndef __DFRobot_RGBLCD1602_H__
-#define __DFRobot_RGBLCD1602_H__
+#ifndef __Display_H__
+#define __Display_H__
 #include <Wire.h>
 #include <inttypes.h>
 #include <stdio.h>
@@ -81,14 +81,14 @@
 #define LCD_5x10DOTS 0x04
 #define LCD_5x8DOTS 0x00
 
-class DFRobot_RGBLCD1602 {
+class Display {
 
 public:
   /**
-   * @fn DFRobot_RGBLCD1602
+   * @fn Display
    * @brief Constructor
    */
-  DFRobot_RGBLCD1602(uint8_t RGBAddr,uint8_t lcdCols=16,uint8_t lcdRows=2,TwoWire *pWire=&Wire,uint8_t lcdAddr=LCD_ADDRESS);
+  Display(uint8_t RGBAddr,uint8_t lcdCols=16,uint8_t lcdRows=2,TwoWire *pWire=&Wire,uint8_t lcdAddr=LCD_ADDRESS);
 
   /**
    * @fn init
