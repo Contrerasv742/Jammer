@@ -41,6 +41,17 @@ For easier usage create an alias in the terminal file.
 alias get_idf='. $HOME/esp/esp-idf/export.sh'
 ```
 
+### IDE
+My IDE of choice is Neovim. In order for diagonostics to work properly, 
+compile commands have to be linked:
+
+```bash
+# Compile Commands
+ln -s build/compile_commands.json
+```
+
+This allows for proper Neovim diagnostics.
+
 # Pin Layout
 
 <p align="center">
