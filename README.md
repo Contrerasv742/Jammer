@@ -3,8 +3,8 @@ Have you ever been biking around the city and wanted privacy. Maybe preventing l
 
 <table align="center">
   <tr>
-    <td><img src="angle_1.png" width="400" alt="ESP32 Pinout angle 1"></td>
-    <td><img src="angle_2.png" width="400" alt="ESP32 Pinout angle 2"></td>
+    <td><img src="imgs/angle_1.png" width="400" alt="ESP32 Pinout angle 1"></td>
+    <td><img src="imgs/angle_2.png" width="400" alt="ESP32 Pinout angle 2"></td>
   </tr>
 </table>
 
