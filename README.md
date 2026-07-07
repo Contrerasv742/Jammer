@@ -66,10 +66,7 @@ This allows for proper Neovim diagnostics.
 ```
 Jammer
 ├── CMakeLists.txt
-├── src/
-│   ├── CMakeLists.txt
-│   └── jammer.c
-└── cad/
-    ├── platform.3df
-    └── left.3df
+├── src/            Src code for functionality
+└── cad/            CAD Files
+└── components/     Code for driving components
 ```
