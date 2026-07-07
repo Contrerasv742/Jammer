@@ -1,1 +1,4 @@
-+ Convert LCD code into a component to be easily used through out the code
+# TODO
++ Work on HSM model for Jammer
++ Work on driving motors
++ Update CAD to hold motors
