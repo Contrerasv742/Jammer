@@ -1,0 +1,7 @@
+Part Number,Description,Qty,Package,Source,Unit Price (USD),Notes
+ESP32-WROOM CP2102,Wi-Fi/BT MCU module,1,Module,Amazon,4.5,Main controller
+TSAK6200,EMITTER IR 940NM 100MA,1,,DigiKey,0.345,IR Emitter
+2N7000,MOSFET 60V 0.2A 5OHM 150C,2,,DigiKey,0.67,Mosfets for voltage regulation
+BPV10NF,Sensor Photodiode 940NM,3,,DigiKey,1.14,Recievers
+HUSB238,USB Type C Power Delivery,1,,DigiKey,5.95,Power Supply
+TW-E012-000,JUMPER KIT VARIOUS 140PCS,1,,DigiKey,6.99,Wiring
