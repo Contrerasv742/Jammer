@@ -3,8 +3,8 @@ Have you ever been biking around the city and wanted privacy. Maybe preventing l
 
 <table align="center">
   <tr>
-    <td><img src="imgs/angle_1.png" width="400" alt="ESP32 Pinout angle 1"></td>
-    <td><img src="imgs/angle_2.png" width="400" alt="ESP32 Pinout angle 2"></td>
+    <td><img src="assets/angle_1.png" width="400" alt="ESP32 Pinout angle 1"></td>
+    <td><img src="assets/angle_2.png" width="400" alt="ESP32 Pinout angle 2"></td>
   </tr>
 </table>
 
@@ -52,10 +52,22 @@ ln -s build/compile_commands.json
 
 This allows for proper Neovim diagnostics.
 
-# Pin Layout
+# System Block Diagram
+<p align="center">
+    <img 
+        src="assets/block_diagram.png" 
+        width="800" 
+        alt="System Block Diagram"
+    />
+</p>
 
 <p align="center">
-    <img src="imgs/pinout.jpg" width="400" alt="ESP32 Pinout">
+    Reference: <a href="https://har.gsfc.nasa.gov/uploads/images_db/Screen%20Shot%202014-06-16%20at%203_00_45%20PM.png">NASA Engineer Handbook</a>
+</p>
+
+# Pin Layout
+<p align="center">
+    <img src="assets/pinout.jpg" width="400" alt="ESP32 Pinout">
 </p>
 
 <p align="center">
@@ -66,10 +78,14 @@ This allows for proper Neovim diagnostics.
 ```
 Jammer
 ├── CMakeLists.txt
-├── src/
-│   ├── CMakeLists.txt
-│   └── jammer.c
-└── cad/
-    ├── platform.3df
-    └── left.3df
+├── assets/         Contains all img files
+├── components/     Code for driving components
+├── hardware/                   
+├───── cad/         CAD Files
+├───── bom.csv      Comprehensive Bill of Material
+├── src/            Main code for functionality
+└── test/           Simple test for checking functionality
 ```
+
+# BOM
+See the full [Bill of Materials](hardware/bom.csv).
