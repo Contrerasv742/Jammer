@@ -11,7 +11,9 @@
 
 #ifndef __Display_H__
 #define __Display_H__
+#include "esp_attr.h"
 #include <Wire.h>
+#include <cstdint>
 #include <inttypes.h>
 #include <stdio.h>
 #include <string.h>
@@ -24,62 +26,93 @@
 /*!
  *  @brief color define
  */ 
-#define WHITE           0
-#define RED             1
-#define GREEN           2
-#define BLUE            3
+struct Rgb
+{
+    std::uint8_t r;
+    std::uint8_t g;
+    std::uint8_t b;
+};
 
-#define REG_MODE1       0x00
-#define REG_MODE2       0x01
-#define REG_OUTPUT      0x08
+enum class Color : std::uint8_t { white, red, green, blue };
 
-/*!
- *  @brief commands
- */
-#define LCD_CLEARDISPLAY 0x01
-#define LCD_RETURNHOME 0x02
-#define LCD_ENTRYMODESET 0x04
-#define LCD_DISPLAYCONTROL 0x08
-#define LCD_CURSORSHIFT 0x10
-#define LCD_FUNCTIONSET 0x20
-#define LCD_SETCGRAMADDR 0x40
-#define LCD_SETDDRAMADDR 0x80
+namespace reg
+{
+    inline constexpr uint8_t mode_1 = 0x00;
+    inline constexpr uint8_t mode_2 = 0x01;
+    inline constexpr uint8_t output = 0x08;
+};
 
 /*!
- *  @brief flags for display entry mode
+ *  @brief LCD commands
  */
-#define LCD_ENTRYRIGHT 0x00
-#define LCD_ENTRYLEFT 0x02
-#define LCD_ENTRYSHIFTINCREMENT 0x01
-#define LCD_ENTRYSHIFTDECREMENT 0x00
+
+namespace lcd::cmd
+{
+    inline constexpr std::uint8_t clear_display   = 0x01;
+    inline constexpr std::uint8_t return_home     = 0x02;
+    inline constexpr std::uint8_t entry_mode_set  = 0x04;
+    inline constexpr std::uint8_t display_control = 0x08;
+    inline constexpr std::uint8_t cursor_shift    = 0x10;
+    inline constexpr std::uint8_t function_set    = 0x20;
+    inline constexpr std::uint8_t set_cgram_addr  = 0x40;
+    inline constexpr std::uint8_t set_ddram_addr  = 0x80;
+}
 
 /*!
- *  @brief flags for display on/off control
+ *  @brief flags entry for display entry mode
  */
-#define LCD_DISPLAYON 0x04
-#define LCD_DISPLAYOFF 0x00
-#define LCD_CURSORON 0x02
-#define LCD_CURSOROFF 0x00
-#define LCD_BLINKON 0x01
-#define LCD_BLINKOFF 0x00
+
+namespace lcd::display::flag
+{
+    inline constexpr std::uint8_t right             = 0x00;
+    inline constexpr std::uint8_t left              = 0x02;
+    inline constexpr std::uint8_t shift_increment   = 0x01;
+    inline constexpr std::uint8_t shift_decrement   = 0x00;
+};
 
 /*!
- *  @brief flags for display/cursor shift
+ *  @brief flags for display/blink on/off control
  */
-#define LCD_DISPLAYMOVE 0x08
-#define LCD_CURSORMOVE 0x00
-#define LCD_MOVERIGHT 0x04
-#define LCD_MOVELEFT 0x00
+
+namespace lcd::display
+{
+    inline constexpr std::uint8_t on         = 0x04;
+    inline constexpr std::uint8_t off        = 0x00;
+
+    inline constexpr std::uint8_t move       = 0x08;
+    inline constexpr std::uint8_t move_right = 0x04;
+    inline constexpr std::uint8_t move_left  = 0x00;
+
+    inline constexpr std::uint8_t blink_on    = 0x01;
+    inline constexpr std::uint8_t blink_off   = 0x00;
+};
+
+/*!
+ *  @brief flags for cursor control
+ */
+
+namespace lcd::cursor
+{
+    inline constexpr std::uint8_t on = 0x02;
+    inline constexpr std::uint8_t off = 0x00;
+    inline constexpr std::uint8_t move = 0x00;
+    inline constexpr std::uint8_t shift    = 0x10;
+};
+
 
 /*!
  *  @brief flags for function set
  */
-#define LCD_8BITMODE 0x10
-#define LCD_4BITMODE 0x00
-#define LCD_2LINE 0x08
-#define LCD_1LINE 0x00
-#define LCD_5x10DOTS 0x04
-#define LCD_5x8DOTS 0x00
+
+namespace lcd::function
+{
+    inline constexpr std::uint8_t bits_8    = 0x10;
+    inline constexpr std::uint8_t bits_4    = 0x00;
+    inline constexpr std::uint8_t lines_2   = 0x08;
+    inline constexpr std::uint8_t lines_1   = 0x00;
+    inline constexpr std::uint8_t dots_5x10 = 0x04;
+    inline constexpr std::uint8_t dots_5x8  = 0x00;
+}
 
 class Display {
 
@@ -218,7 +251,7 @@ public:
    * @brief backlight color
    * @param color  backlight color  Preferences： WHITE\RED\GREEN\BLUE
    */
-  void setColor(uint8_t color);
+  void setColor(Color color);
 
   /**
    * @fn closeBacklight
@@ -275,7 +308,7 @@ private:
    * @param row rows optional range 0-1，0 is the first row, 1 is the second row
    * @param charSize  character size LCD_5x8DOTS\LCD_5x10DOTS
    */
-  void begin(uint8_t rows, uint8_t charSize = LCD_5x8DOTS);
+  void begin(uint8_t rows, uint8_t charSize = lcd::function::dots_5x8);
 
   /**
    * @fn send

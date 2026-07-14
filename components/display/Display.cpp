@@ -17,17 +17,24 @@
 #include "esp_log.h"
 #include "driver/i2c_master.h"
 #include "esp_rom_sys.h"
-
+#include <cstdint>
 
 #include "Display.h"
 
-const uint8_t color_define[4][3] = 
+namespace
 {
-    {255, 255, 255},            // white
-    {255, 0, 0},                // red
-    {0, 255, 0},                // green
-    {0, 0, 255},                // blue
-};
+    constexpr Rgb color_of(Color c)
+    {
+        switch (c)
+        {
+            case Color::white: return {255, 255, 255};
+            case Color::red:   return {255,   0,   0};
+            case Color::green: return {  0, 255,   0};
+            case Color::blue:  return {  0,   0, 255};
+        }
+        return {};  // unreachable
+    }
+}
 
 /*******************************public*******************************/
 Display::Display(
@@ -65,85 +72,84 @@ void Display::init() {
     REG_BLUE     =   0x03 ;       // pwm0
     REG_ONLY     =   0x01 ; 
   }
-  _showFunction = LCD_4BITMODE | LCD_1LINE | LCD_5x8DOTS;
+  _showFunction = lcd::function::bits_4| lcd::function::lines_1| lcd::function::dots_5x8;
   begin(_rows);
 }
 
 void Display::clear() {
-    command(LCD_CLEARDISPLAY);        // clear display, set cursor position to zero
+    command(lcd::cmd::clear_display);        // clear display, set cursor position to zero
     vTaskDelay(pdMS_TO_TICKS(2000));        // this command takes a long time!
 }
 
 void Display::home() {
-    command(LCD_RETURNHOME);        // set cursor position to zero
+    command(lcd::cmd::return_home);        // set cursor position to zero
     vTaskDelay(pdMS_TO_TICKS(2000));        // this command takes a long time!
 }
 
 void Display::noDisplay() {
-    _showControl &= ~LCD_DISPLAYON;
-    command(LCD_DISPLAYCONTROL | _showControl);
+    _showControl &= ~lcd::display::on;
+    command(lcd::cmd::display_control | _showControl);
 }
 
 void Display::display() {
-    _showControl |= LCD_DISPLAYON;
-    command(LCD_DISPLAYCONTROL | _showControl);
+    _showControl |= lcd::display::on;
+    command(lcd::cmd::display_control | _showControl);
 }
 
 void Display::stopBlink() {
-    _showControl &= ~LCD_BLINKON;
-    command(LCD_DISPLAYCONTROL | _showControl);
+    _showControl &= ~lcd::display::blink_on;
+    command(lcd::cmd::display_control | _showControl);
 }
 void Display::blink() {
-    _showControl |= LCD_BLINKON;
-    command(LCD_DISPLAYCONTROL | _showControl);
+    _showControl |= lcd::display::blink_on;
+    command(lcd::cmd::display_control | _showControl);
 }
 
 void Display::noCursor() {
-    _showControl &= ~LCD_CURSORON;
-    command(LCD_DISPLAYCONTROL | _showControl);
+    _showControl &= ~lcd::cursor::on;
+    command(lcd::cmd::display_control | _showControl);
 }
 
-void Display::cursor() { _showControl |= LCD_CURSORON;
-    command(LCD_DISPLAYCONTROL | _showControl);
+void Display::cursor() { _showControl |= lcd::cursor::on;
+    command(lcd::cmd::display_control | _showControl);
 }
 
 void Display::scrollDisplayLeft(void) {
-    command(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVELEFT);
+    command(lcd::cmd::cursor_shift | lcd::display::move | lcd::display::move_left);
 }
 
 void Display::scrollDisplayRight(void) {
-    command(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVERIGHT);
+    command(lcd::cmd::cursor_shift | lcd::display::move | lcd::display::move_right);
 }
 
 void Display::leftToRight(void) {
-    _showMode |= LCD_ENTRYLEFT;
-    command(LCD_ENTRYMODESET | _showMode);
+    _showMode |= lcd::display::flag::left;
+    command(lcd::cmd::entry_mode_set | _showMode);
 }
 
 void Display::rightToLeft(void) {
-    _showMode &= ~LCD_ENTRYLEFT;
-    command(LCD_ENTRYMODESET | _showMode);
+    _showMode &= ~lcd::display::flag::left;
+    command(lcd::cmd::entry_mode_set | _showMode);
 }
 
 void Display::noAutoscroll(void) {
-    _showMode &= ~LCD_ENTRYSHIFTINCREMENT;
-    command(LCD_ENTRYMODESET | _showMode);
+    _showMode &= ~lcd::display::flag::shift_increment;
+    command(lcd::cmd::entry_mode_set | _showMode);
 }
 
 void Display::autoscroll(void) {
-    _showMode |= LCD_ENTRYSHIFTINCREMENT;
-    command(LCD_ENTRYMODESET | _showMode);
+    _showMode |= lcd::display::flag::shift_increment;
+    command(lcd::cmd::entry_mode_set | _showMode);
 }
 
 void Display::customSymbol(uint8_t location, uint8_t charmap[]) {
     location &= 0x7; // we only have 8 locations 0-7
-    command(LCD_SETCGRAMADDR | (location << 3));
+    command(lcd::cmd::set_cgram_addr | (location << 3));
     
     
     uint8_t data[9];
     data[0] = 0x40;
-    for(int i=0; i<8; i++)
-    {
+    for(int i=0; i<8; i++) {
         data[i+1] = charmap[i];
     }
     send(data, 9);
@@ -151,7 +157,7 @@ void Display::customSymbol(uint8_t location, uint8_t charmap[]) {
 
 void Display::setCursor(uint8_t col, uint8_t row) {
     col = (row == 0 ? col|0x80 : col|0xc0);
-    uint8_t data[3] = {0x80, col};
+    uint8_t data[3] {0x80, col};
 
     send(data, 2);
 }
@@ -176,14 +182,14 @@ void Display::setRGB (uint8_t r, uint8_t g, uint8_t b) {
 
 }
 
-void Display::setColor (uint8_t color) {
-    if (color > 3) return ;
-    setRGB(color_define[color][0], color_define[color][1], color_define[color][2]);
+void Display::setColor(Color color) {
+    const auto [r, g, b] = color_of(color);
+    setRGB(r, g, b);
 }
 
 
 inline size_t Display::write (uint8_t value) {
-    uint8_t data[3] = {0x40, value};
+    uint8_t data[3] {0x40, value};
     send(data, 2);
     return 1; // assume success
 }
@@ -191,7 +197,7 @@ inline size_t Display::write (uint8_t value) {
 size_t Display::write(const char* str) {
     if (str == nullptr) return 0;
     
-    size_t n = 0;
+    size_t n { 0 };
     while (*str) {
         write((uint8_t)*str++);
         n++;
@@ -200,7 +206,7 @@ size_t Display::write(const char* str) {
 }
 
 size_t Display::write(const uint8_t* buffer, size_t size) {
-    size_t n = 0;
+    size_t n { 0 };
     while (size--) {
         write(*buffer++);
         n++;
@@ -209,7 +215,7 @@ size_t Display::write(const uint8_t* buffer, size_t size) {
 }
 
 inline void Display::command (uint8_t value) {
-    uint8_t data[3] = {0x80, value};
+    uint8_t data[3] {0x80, value};
     send(data, 2);
 }
 
@@ -226,13 +232,13 @@ void Display::setBacklight (bool mode) {
 /*******************************private*******************************/
 void Display::begin( uint8_t rows, uint8_t charSize) {
     if (rows > 1) {
-        _showFunction |= LCD_2LINE;
+        _showFunction |= lcd::function::lines_2;
     }
     _numLines = rows;
     _currLine = 0;
     ///< for some 1 line displays you can select a 10 pixel high font
     if ((charSize != 0) && (rows == 1)) {
-        _showFunction |= LCD_5x10DOTS;
+        _showFunction |= lcd::function::dots_5x10;
     }
 
     ///< SEE PAGE 45/46 FOR INITIALIZATION SPECIFICATION!
@@ -244,36 +250,36 @@ void Display::begin( uint8_t rows, uint8_t charSize) {
     ///< page 45 figure 23
 
     ///< Send function set command sequence
-    command(LCD_FUNCTIONSET | _showFunction);
+    command(lcd::cmd::function_set | _showFunction);
     vTaskDelay(pdMS_TO_TICKS(5));  // wait more than 4.1ms
 	
 	///< second try
-    command(LCD_FUNCTIONSET | _showFunction);
+    command(lcd::cmd::function_set | _showFunction);
     vTaskDelay(pdMS_TO_TICKS(5));
 
     ///< third go
-    command(LCD_FUNCTIONSET | _showFunction);
+    command(lcd::cmd::function_set | _showFunction);
 
     ///< turn the display on with no cursor or blinking default
-    _showControl = LCD_DISPLAYON | LCD_CURSOROFF | LCD_BLINKOFF;
+    _showControl = lcd::display::on | lcd::cursor::off | lcd::display::blink_off;
     display();
 
     ///< clear it off
     clear();
 
     ///< Initialize to default text direction (for romance languages)
-    _showMode = LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT;
+    _showMode = lcd::display::flag::left | lcd::display::flag::shift_decrement;
     ///< set the entry mode
-    command(LCD_ENTRYMODESET | _showMode);
+    command(lcd::cmd::entry_mode_set | _showMode);
     
     if(_RGBAddr == (0xc0>>1)){
       ///< backlight init
-      setReg(REG_MODE1, 0);
+      setReg(reg::mode_1, 0);
       ///< set LEDs controllable by both PWM and GRPPWM registers
-      setReg(REG_OUTPUT, 0xFF);
+      setReg(reg::output, 0xFF);
       ///< set MODE2 values
       ///< 0010 0000 -> 0x20  (DMBLNK to 1, ie blinky mode)
-      setReg(REG_MODE2, 0x20);
+      setReg(reg::mode_2, 0x20);
     }else if(_RGBAddr == (0x60>>1)){
        setReg(0x01, 0x00);
        setReg(0x02, 0xfF);
@@ -291,7 +297,7 @@ void Display::begin( uint8_t rows, uint8_t charSize) {
 void Display::send(uint8_t *data, uint8_t len)
 {
     _pWire->beginTransmission(_lcdAddr);        // transmit to device #4
-    for(int i=0; i<len; i++) {
+    for (int i { 0 }; i < len; i++) {
         _pWire->write(data[i]);
 		vTaskDelay(pdMS_TO_TICKS(1));
     }
