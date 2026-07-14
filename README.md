@@ -52,15 +52,6 @@ ln -s build/compile_commands.json
 
 This allows for proper Neovim diagnostics.
 
-# Pin Layout
-<p align="center">
-    <img src="assets/pinout.jpg" width="400" alt="ESP32 Pinout">
-</p>
-
-<p align="center">
-    Credit: <a href="https://images.theengineeringprojects.com/image/main/2024/03/esp32-pinout.jpg">The Engineering Projects</a>
-</p>
-
 # System Block Diagram
 <p align="center">
     <img 
@@ -68,6 +59,15 @@ This allows for proper Neovim diagnostics.
         width="800" 
         alt="System Block Diagram"
     />
+</p>
+
+# Pin Layout
+<p align="center">
+    <img src="assets/pinout.jpg" width="400" alt="ESP32 Pinout">
+</p>
+
+<p align="center">
+    Credit: <a href="https://images.theengineeringprojects.com/image/main/2024/03/esp32-pinout.jpg">The Engineering Projects</a>
 </p>
 
 # Files
