@@ -3,8 +3,8 @@ Have you ever been biking around the city and wanted privacy. Maybe preventing l
 
 <table align="center">
   <tr>
-    <td><img src="imgs/angle_1.png" width="400" alt="ESP32 Pinout angle 1"></td>
-    <td><img src="imgs/angle_2.png" width="400" alt="ESP32 Pinout angle 2"></td>
+    <td><img src="assets/angle_1.png" width="400" alt="ESP32 Pinout angle 1"></td>
+    <td><img src="assets/angle_2.png" width="400" alt="ESP32 Pinout angle 2"></td>
   </tr>
 </table>
 
@@ -53,20 +53,35 @@ ln -s build/compile_commands.json
 This allows for proper Neovim diagnostics.
 
 # Pin Layout
-
 <p align="center">
-    <img src="imgs/pinout.jpg" width="400" alt="ESP32 Pinout">
+    <img src="assets/pinout.jpg" width="400" alt="ESP32 Pinout">
 </p>
 
 <p align="center">
     Credit: <a href="https://images.theengineeringprojects.com/image/main/2024/03/esp32-pinout.jpg">The Engineering Projects</a>
 </p>
 
+# System Block Diagram
+<p align="center">
+    <img 
+        src="assets/block_diagram.png" 
+        width="800" 
+        alt="System Block Diagram"
+    />
+</p>
+
 # Files
 ```
 Jammer
 ├── CMakeLists.txt
-├── src/            Src code for functionality
-└── cad/            CAD Files
-└── components/     Code for driving components
+├── assets/         Contains all img files
+├── components/     Code for driving components
+├── hardware/                   
+├───── cad/         CAD Files
+├───── bom.csv      Comprehensive Bill of Material
+├── src/            Main code for functionality
+└── test/           Simple test for checking functionality
 ```
+
+# BOM
+See the full [Bill of Materials](hardware/bom.csv).
