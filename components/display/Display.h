@@ -18,6 +18,9 @@
 #include <stdio.h>
 #include <string.h>
 
+
+using namespace std;
+
 /*!
  *  @brief Device I2C Arress
  */
@@ -28,90 +31,91 @@
  */ 
 struct Rgb
 {
-    std::uint8_t r;
-    std::uint8_t g;
-    std::uint8_t b;
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
 };
 
-enum class Color : std::uint8_t { white, red, green, blue };
+enum class Color : uint8_t { white, red, green, blue };
 
 namespace reg
 {
     inline constexpr uint8_t mode_1 = 0x00;
     inline constexpr uint8_t mode_2 = 0x01;
     inline constexpr uint8_t output = 0x08;
-};
-
-/*!
- *  @brief LCD commands
- */
-
-namespace lcd::cmd
-{
-    inline constexpr std::uint8_t clear_display   = 0x01;
-    inline constexpr std::uint8_t return_home     = 0x02;
-    inline constexpr std::uint8_t entry_mode_set  = 0x04;
-    inline constexpr std::uint8_t display_control = 0x08;
-    inline constexpr std::uint8_t cursor_shift    = 0x10;
-    inline constexpr std::uint8_t function_set    = 0x20;
-    inline constexpr std::uint8_t set_cgram_addr  = 0x40;
-    inline constexpr std::uint8_t set_ddram_addr  = 0x80;
 }
+namespace lcd {
+    /*!
+     *  @brief LCD commands
+     */
 
-/*!
- *  @brief flags entry for display entry mode
- */
+    namespace cmd
+    {
+        inline constexpr uint8_t clear_display   = 0x01;
+        inline constexpr uint8_t return_home     = 0x02;
+        inline constexpr uint8_t entry_mode_set  = 0x04;
+        inline constexpr uint8_t display_control = 0x08;
+        inline constexpr uint8_t cursor_shift    = 0x10;
+        inline constexpr uint8_t function_set    = 0x20;
+        inline constexpr uint8_t set_cgram_addr  = 0x40;
+        inline constexpr uint8_t set_ddram_addr  = 0x80;
+    }
 
-namespace lcd::display::flag
-{
-    inline constexpr std::uint8_t right             = 0x00;
-    inline constexpr std::uint8_t left              = 0x02;
-    inline constexpr std::uint8_t shift_increment   = 0x01;
-    inline constexpr std::uint8_t shift_decrement   = 0x00;
-};
+    /*!
+     *  @brief flags entry for display entry mode
+     */
 
-/*!
- *  @brief flags for display/blink on/off control
- */
+    namespace display::flag
+    {
+        inline constexpr uint8_t right             = 0x00;
+        inline constexpr uint8_t left              = 0x02;
+        inline constexpr uint8_t shift_increment   = 0x01;
+        inline constexpr uint8_t shift_decrement   = 0x00;
+    }
 
-namespace lcd::display
-{
-    inline constexpr std::uint8_t on         = 0x04;
-    inline constexpr std::uint8_t off        = 0x00;
+    /*!
+     *  @brief flags for display/blink on/off control
+     */
 
-    inline constexpr std::uint8_t move       = 0x08;
-    inline constexpr std::uint8_t move_right = 0x04;
-    inline constexpr std::uint8_t move_left  = 0x00;
+    namespace display
+    {
+        inline constexpr uint8_t on         = 0x04;
+        inline constexpr uint8_t off        = 0x00;
 
-    inline constexpr std::uint8_t blink_on    = 0x01;
-    inline constexpr std::uint8_t blink_off   = 0x00;
-};
+        inline constexpr uint8_t move       = 0x08;
+        inline constexpr uint8_t move_right = 0x04;
+        inline constexpr uint8_t move_left  = 0x00;
 
-/*!
- *  @brief flags for cursor control
- */
+        inline constexpr uint8_t blink_on    = 0x01;
+        inline constexpr uint8_t blink_off   = 0x00;
+    }
 
-namespace lcd::cursor
-{
-    inline constexpr std::uint8_t on = 0x02;
-    inline constexpr std::uint8_t off = 0x00;
-    inline constexpr std::uint8_t move = 0x00;
-    inline constexpr std::uint8_t shift    = 0x10;
-};
+    /*!
+     *  @brief flags for cursor control
+     */
+
+    namespace cursor
+    {
+        inline constexpr uint8_t on = 0x02;
+        inline constexpr uint8_t off = 0x00;
+        inline constexpr uint8_t move = 0x00;
+        inline constexpr uint8_t shift    = 0x10;
+    }
 
 
-/*!
- *  @brief flags for function set
- */
+    /*!
+     *  @brief flags for function set
+     */
 
-namespace lcd::function
-{
-    inline constexpr std::uint8_t bits_8    = 0x10;
-    inline constexpr std::uint8_t bits_4    = 0x00;
-    inline constexpr std::uint8_t lines_2   = 0x08;
-    inline constexpr std::uint8_t lines_1   = 0x00;
-    inline constexpr std::uint8_t dots_5x10 = 0x04;
-    inline constexpr std::uint8_t dots_5x8  = 0x00;
+    namespace function
+    {
+        inline constexpr uint8_t bits_8    = 0x10;
+        inline constexpr uint8_t bits_4    = 0x00;
+        inline constexpr uint8_t lines_2   = 0x08;
+        inline constexpr uint8_t lines_1   = 0x00;
+        inline constexpr uint8_t dots_5x10 = 0x04;
+        inline constexpr uint8_t dots_5x8  = 0x00;
+    }
 }
 
 class Display {

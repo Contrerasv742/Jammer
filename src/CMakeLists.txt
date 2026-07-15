@@ -1,6 +1,5 @@
 idf_component_register(
-    SRCS 
-        "main.cpp"
+    SRCS "main.cpp" "hsm.cpp"
     INCLUDE_DIRS "."
     REQUIRES esp_driver_i2c
     REQUIRES esp_timer

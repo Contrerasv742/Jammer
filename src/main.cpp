@@ -1,4 +1,5 @@
 #include "Display.h"
+#include "hsm.hpp"
 
 #include <stdio.h>
 #include "sdkconfig.h"
@@ -67,18 +68,31 @@ void detected() {
  * @param col columns optional range 0-15
  * @param row rows optional range 0-1，0 is the first row, 1 is the second row
  */
+// extern "C" void app_main(void) {
+//     ESP_LOGI(TAG, "Initializing LCD...");
+//     display.init();
+//     display.setRGB(colorR, colorG, colorB);
+//     ESP_LOGI(TAG, "LCD initialized!");
+//
+//     while (true) {
+//         scanning();
+//         display.clear();
+//         detected();
+//         display.clear();
+//     }
+//
+//     return;
+// }
+
 extern "C" void app_main(void) {
     ESP_LOGI(TAG, "Initializing LCD...");
     display.init();
     display.setRGB(colorR, colorG, colorB);
     ESP_LOGI(TAG, "LCD initialized!");
-    
+ 
+    // Hand the display to the state machine and run it forever.
+    sm_init(display);
     while (true) {
-        scanning();
-        display.clear();
-        detected();
-        display.clear();
+        sm_run();
     }
-
-    return;
 }
