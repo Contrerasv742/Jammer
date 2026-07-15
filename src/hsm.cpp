@@ -51,11 +51,7 @@ static constexpr NodeTable NODES = {{
     { "Decode",       State::SIGNAL_PROCESSING,  State::NONE,          State::JAMMING,           true  },
 }};
 
-// clang-format on
-
-// ---------------------------------------------------------------------------
-//  Runtime
-// ---------------------------------------------------------------------------
+/* Runtime */
 static Display *g_display{nullptr};
 static State g_current{State::IDLE};   // always points at a *leaf*
 static State g_lastSuper{State::NONE}; // last top-level box we were in
@@ -105,13 +101,13 @@ static State decide(State finishedLeaf, State defaultNext) {
   }
 }
 
-void sm_init(Display &display) {
+void hsm_init(Display &display) {
   g_display = &display;
   g_current = State::IDLE;
   g_lastSuper = State::NONE;
 }
 
-void sm_run() {
+void hsm_run() {
   const State finished = g_current;
   const StateNode &node = NODES[finished];
 

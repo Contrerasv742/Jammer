@@ -91,8 +91,8 @@ extern "C" void app_main(void) {
     ESP_LOGI(TAG, "LCD initialized!");
  
     // Hand the display to the state machine and run it forever.
-    sm_init(display);
+    hsm_init(display);
     while (true) {
-        sm_run();
+        hsm_run();
     }
 }
