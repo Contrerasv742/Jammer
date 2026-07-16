@@ -3,10 +3,11 @@
  * @brief Display class infrastructure, the implementation of basic methods
  * @copyright	Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
- * @maintainer [yangfeng](feng.yang@dfrobot.com)
+ * @creator [yangfeng](feng.yang@dfrobot.com)
  * @version  V1.0
  * @date  2021-09-24
  * @url https://github.com/DFRobot/DFRobot_RGBLCD1602
+ * @maintainer [Victor P.C.](contrerasv742@gmail.com)
  */
 
 #include "freertos/FreeRTOS.h"
