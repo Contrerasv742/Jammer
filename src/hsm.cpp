@@ -1,21 +1,20 @@
 #include "hsm.hpp"
 #include "Display.h"
+#include "config.h"
 
 #include "esp_log.h"
 #include "freertos/task.h"
 #include <cstring>
 
-static const char *SM_TAG{"HSM"};
+static const char *STATE_MACHINE_TAG{"HSM"};
 
 // Must match your Display geometry (used to center the leaf name).
-#define SM_LCD_COLS 16
 
 // How long each low-level function stays on screen.
-#define SM_STEP_MS 800
+static const int STATE_MACHINE_STEP_MS{800};
 
 // ---------------------------------------------------------------------------
 //  Hierarchy table
-//
 //  One row per real state, indexed by the State enum. Every state knows its
 //  parent. Superstates additionally declare which child is entered first
 //  (`initial`); leaf states declare where to go when they finish (`next`).
@@ -29,26 +28,28 @@ struct StateNode {
 };
 
 struct NodeTable {
-    StateNode data[static_cast<size_t>(State::COUNT)];
+  StateNode data[static_cast<size_t>(State::COUNT)];
 
-    constexpr const StateNode &operator[](State s) const {
-        return data[static_cast<size_t>(s)];
-    }
+  constexpr const StateNode &operator[](State s) const {
+    return data[static_cast<size_t>(s)];
+  }
 };
 
 static constexpr NodeTable NODES = {{
-/*  { name,           Parent State,              Initial State,        Next State,               isLeaf }, */
-    { "Idle",         State::NONE,               State::NONE,          State::SCANNING,          true  },
-    { "Scanning",     State::NONE,               State::MOVE,          State::NONE,              false },
-    { "Move",         State::SCANNING,           State::NONE,          State::SCAN,              true  },
-    { "Scan",         State::SCANNING,           State::NONE,          State::COMPARE,           true  },
-    { "Compare",      State::SCANNING,           State::NONE,          State::SIGNAL_PROCESSING, true  },
-    { "Jamming",      State::NONE,               State::JAM,           State::NONE,              false },
-    { "Jam",          State::JAMMING,            State::NONE,          State::IDLE,              true  },
-    { "Sig Proc",     State::NONE,               State::FILTER_NOISE,  State::NONE,              false },
-    { "Filter Noise", State::SIGNAL_PROCESSING,  State::NONE,          State::DEMODULATE,        true  },
-    { "Demodulate",   State::SIGNAL_PROCESSING,  State::NONE,          State::DECODE,            true  },
-    { "Decode",       State::SIGNAL_PROCESSING,  State::NONE,          State::JAMMING,           true  },
+    /*  { name,           Parent State,              Initial State,        Next
+       State,               isLeaf }, */
+    {"Idle", State::NONE, State::NONE, State::SCANNING, true},
+    {"Scanning", State::NONE, State::MOVE, State::NONE, false},
+    {"Move", State::SCANNING, State::NONE, State::SCAN, true},
+    {"Scan", State::SCANNING, State::NONE, State::COMPARE, true},
+    {"Compare", State::SCANNING, State::NONE, State::SIGNAL_PROCESSING, true},
+    {"Jamming", State::NONE, State::JAM, State::NONE, false},
+    {"Jam", State::JAMMING, State::NONE, State::IDLE, true},
+    {"Sig Proc", State::NONE, State::FILTER_NOISE, State::NONE, false},
+    {"Filter Noise", State::SIGNAL_PROCESSING, State::NONE, State::DEMODULATE,
+     true},
+    {"Demodulate", State::SIGNAL_PROCESSING, State::NONE, State::DECODE, true},
+    {"Decode", State::SIGNAL_PROCESSING, State::NONE, State::JAMMING, true},
 }};
 
 /* Runtime */
@@ -76,7 +77,7 @@ static State topSuper(State s) {
 static void showLeaf(const char *name) {
   display_->clear();
   int len = static_cast<int>(strlen(name));
-  int col = (SM_LCD_COLS - len) / 2;
+  int col = (LCD_COLS - len) / 2;
   if (col < 0)
     col = 0;
   display_->setCursor(col, 0);
@@ -114,15 +115,16 @@ void hsm_run() {
   // Announce superstate changes on the serial log (never on the LCD).
   State super = topSuper(finished);
   if (super != lastSuper_) {
-    ESP_LOGI(SM_TAG, ">> entering superstate: %s", NODES[super].name);
+    ESP_LOGI(STATE_MACHINE_TAG, ">> entering superstate: %s",
+             NODES[super].name);
     lastSuper_ = super;
   }
 
   // Only the low-level leaf functions print to the screen.
   showLeaf(node.name);
-  ESP_LOGI(SM_TAG, "   run leaf: %s", node.name);
+  ESP_LOGI(STATE_MACHINE_TAG, "   run leaf: %s", node.name);
 
-  vTaskDelay(pdMS_TO_TICKS(SM_STEP_MS));
+  vTaskDelay(pdMS_TO_TICKS(STATE_MACHINE_STEP_MS));
 
   // Advance: pick the next state, then resolve any superstate to its leaf.
   current_ = resolveLeaf(decide(finished, node.next));

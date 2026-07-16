@@ -5,32 +5,35 @@
 class Display;
 
 enum class State : uint8_t {
-    /* top-level state */
-    IDLE = 0,
+  /* top-level state */
+  IDLE = 0,
 
-    /* Scanning */
-    SCANNING,          // superstate
-    MOVE,
-    SCAN,
-    COMPARE,
+  /* Scanning */
+  SCANNING, // superstate
+  MOVE,
+  SCAN,
+  COMPARE,
 
-    /* Jamming */
-    JAMMING,           // superstate
-    JAM,
+  /* Jamming */
+  JAMMING, // superstate
+  JAM,
 
-    /* Signal Processing */
-    SIGNAL_PROCESSING, // superstate
-    FILTER_NOISE,
-    DEMODULATE,
-    DECODE,
+  /* Signal Processing */
+  SIGNAL_PROCESSING, // superstate
+  FILTER_NOISE,
+  DEMODULATE,
+  DECODE,
 
-    COUNT,             // number of real states (keep last of the reals)
-    NONE = 0xFF        // sentinel for "no parent / no substate"
+  COUNT,      // number of real states (keep last of the reals)
+  NONE = 0xFF // sentinel for "no parent / no substate"
 };
 
-// Bind the state machine to your Display instance.
-void hsm_init(Display& display);
+/* @brief Bind the state machine to your Display instance.
+ * @param display
+ * */
+void hsm_init(Display &display);
 
-// Run exactly one leaf: draw it, wait, then advance to the next state.
-// Call this repeatedly from your main loop.
+/* @brief Run exactly one leaf: draw it, wait, then advance to the
+ * next state. Call this repeatedly from your main loop.
+ * */
 void hsm_run();
