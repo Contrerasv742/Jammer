@@ -37,6 +37,7 @@ struct NodeTable {
 };
 
 static constexpr NodeTable NODES = {{
+/*  { name,           Parent State,              Initial State,        Next State,               isLeaf }, */
     { "Idle",         State::NONE,               State::NONE,          State::SCANNING,          true  },
     { "Scanning",     State::NONE,               State::MOVE,          State::NONE,              false },
     { "Move",         State::SCANNING,           State::NONE,          State::SCAN,              true  },
@@ -51,9 +52,9 @@ static constexpr NodeTable NODES = {{
 }};
 
 /* Runtime */
-static Display *g_display{nullptr};
-static State g_current{State::IDLE};   // always points at a *leaf*
-static State g_lastSuper{State::NONE}; // last top-level box we were in
+static Display *display_{nullptr};
+static State current_{State::IDLE};   // always points at a *leaf*
+static State lastSuper_{State::NONE}; // last top-level box we were in
 
 // Walk a (possibly super) state down to the leaf that should actually run.
 static State resolveLeaf(State s) {
@@ -73,13 +74,13 @@ static State topSuper(State s) {
 
 // Print a leaf name centered on the top row. Only leaves call this.
 static void showLeaf(const char *name) {
-  g_display->clear();
+  display_->clear();
   int len = static_cast<int>(strlen(name));
   int col = (SM_LCD_COLS - len) / 2;
   if (col < 0)
     col = 0;
-  g_display->setCursor(col, 0);
-  g_display->write(name);
+  display_->setCursor(col, 0);
+  display_->write(name);
 }
 
 // Conditional transitions. By default every leaf follows its table `next`,
@@ -101,20 +102,20 @@ static State decide(State finishedLeaf, State defaultNext) {
 }
 
 void hsm_init(Display &display) {
-  g_display = &display;
-  g_current = State::IDLE;
-  g_lastSuper = State::NONE;
+  display_ = &display;
+  current_ = State::IDLE;
+  lastSuper_ = State::NONE;
 }
 
 void hsm_run() {
-  const State finished = g_current;
+  const State finished = current_;
   const StateNode &node = NODES[finished];
 
   // Announce superstate changes on the serial log (never on the LCD).
   State super = topSuper(finished);
-  if (super != g_lastSuper) {
+  if (super != lastSuper_) {
     ESP_LOGI(SM_TAG, ">> entering superstate: %s", NODES[super].name);
-    g_lastSuper = super;
+    lastSuper_ = super;
   }
 
   // Only the low-level leaf functions print to the screen.
@@ -124,5 +125,5 @@ void hsm_run() {
   vTaskDelay(pdMS_TO_TICKS(SM_STEP_MS));
 
   // Advance: pick the next state, then resolve any superstate to its leaf.
-  g_current = resolveLeaf(decide(finished, node.next));
+  current_ = resolveLeaf(decide(finished, node.next));
 }
