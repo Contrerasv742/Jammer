@@ -1,14 +1,9 @@
 #include "Display.h"
 #include "hsm.hpp"
 
-#include <stdio.h>
-#include "sdkconfig.h"
-#include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_log.h"
 #include "esp_timer.h"
-#include "driver/i2c_master.h"
-#include "esp_rom_sys.h"
 
 static const char *TAG { "Debug" };
 

@@ -1,3 +1,4 @@
+#pragma once
 /*!
  * @file Display.h
  * @brief Display class infrastructure
@@ -9,12 +10,8 @@
  * @url https://github.com/DFRobot/DFRobot_RGBLCD1602
  */
 
-#ifndef __Display_H__
-#define __Display_H__
-#include "esp_attr.h"
 #include <Wire.h>
 #include <cstdint>
-#include <inttypes.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -346,5 +343,3 @@ public:
   uint8_t REG_BLUE     =   0 ;       // pwm0
   uint8_t REG_ONLY     =   0 ;       // pwm0
 };
-
-#endif
