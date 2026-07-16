@@ -8,23 +8,21 @@
 
 static const char *STATE_MACHINE_TAG{"HSM"};
 
-// Must match your Display geometry (used to center the leaf name).
+/* Global Runtime Variables */
+static Display *display_{nullptr};
+static State current_{State::IDLE};   // always points at a *leaf*
+static State lastSuper_{State::NONE}; // last top-level box we were in
 
 // How long each low-level function stays on screen.
 static const int STATE_MACHINE_STEP_MS{800};
 
-// ---------------------------------------------------------------------------
-//  Hierarchy table
-//  One row per real state, indexed by the State enum. Every state knows its
-//  parent. Superstates additionally declare which child is entered first
-//  (`initial`); leaf states declare where to go when they finish (`next`).
-// ---------------------------------------------------------------------------
+/* Hierarchy table */
 struct StateNode {
-  const char *name; // shown on the LCD for leaves; log-only for superstates
+  const char *name; // shown for logging states on LCD
   State parent;     // State::NONE for top-level states
   State initial;    // superstate: first child to enter; State::NONE for leaves
   State next;       // leaf: state to transition to when done; State::NONE super
-  bool isLeaf;
+  bool isLeaf;      // Whether or not state isLeaf
 };
 
 struct NodeTable {
@@ -36,8 +34,7 @@ struct NodeTable {
 };
 
 static constexpr NodeTable NODES = {{
-    /*  { name,           Parent State,              Initial State,        Next
-       State,               isLeaf }, */
+    /* {name, Parent_State, Initial_State, Next_State, isLeaf} */
     {"Idle", State::NONE, State::NONE, State::SCANNING, true},
     {"Scanning", State::NONE, State::MOVE, State::NONE, false},
     {"Move", State::SCANNING, State::NONE, State::SCAN, true},
@@ -52,12 +49,13 @@ static constexpr NodeTable NODES = {{
     {"Decode", State::SIGNAL_PROCESSING, State::NONE, State::JAMMING, true},
 }};
 
-/* Runtime */
-static Display *display_{nullptr};
-static State current_{State::IDLE};   // always points at a *leaf*
-static State lastSuper_{State::NONE}; // last top-level box we were in
+/* HSM Helper Functions */
 
-// Walk a (possibly super) state down to the leaf that should actually run.
+/* 
+ * @brief Walk, if possible, a super state down to the leaf that should 
+ *        actually run. 
+ * @param s Super State being resolved
+ * */
 static State resolveLeaf(State s) {
   while (s != State::NONE && !NODES[s].isLeaf) {
     s = NODES[s].initial;
@@ -65,7 +63,10 @@ static State resolveLeaf(State s) {
   return s;
 }
 
-// Walk up to the top-level ancestor (the "box" in the diagram).
+/* 
+ * @brief Walk up to the top-level ancestor (the "box" in the diagram). 
+ * @param s
+ * */
 static State topSuper(State s) {
   while (s != State::NONE && NODES[s].parent != State::NONE) {
     s = NODES[s].parent;
@@ -73,7 +74,10 @@ static State topSuper(State s) {
   return s;
 }
 
-// Print a leaf name centered on the top row. Only leaves call this.
+/*
+ * @brief Print a leaf name centered on the top row. 
+ *        Only leaves call this.
+ * */
 static void showLeaf(const char *name) {
   display_->clear();
   int len = static_cast<int>(strlen(name));
@@ -104,8 +108,8 @@ static State decide(State finishedLeaf, State defaultNext) {
 
 void hsm_init(Display &display) {
   display_ = &display;
-  current_ = State::IDLE;
-  lastSuper_ = State::NONE;
+  // current_ = State::IDLE;
+  // lastSuper_ = State::NONE;
 }
 
 void hsm_run() {

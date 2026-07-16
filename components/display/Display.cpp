@@ -5,9 +5,8 @@
  * @licence     The MIT License (MIT)
  * @creator [yangfeng](feng.yang@dfrobot.com)
  * @version  V1.0
- * @date  2021-09-24
- * @url https://github.com/DFRobot/DFRobot_RGBLCD1602
  * @maintainer [Victor P.C.](contrerasv742@gmail.com)
+ * @date  2026-07-16
  */
 
 #include "freertos/FreeRTOS.h"
