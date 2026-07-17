@@ -1,6 +1,7 @@
 #include "Display.h"
 #include "hsm.hpp"
 #include "config.h"
+#include "Motor.h"
 
 #include "freertos/task.h"
 #include "esp_log.h"

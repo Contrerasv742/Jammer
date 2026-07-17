@@ -4,4 +4,5 @@ idf_component_register(
     REQUIRES esp_driver_i2c
     REQUIRES esp_timer
     REQUIRES display
+    REQUIRES motor
 )
